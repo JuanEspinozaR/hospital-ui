@@ -10,15 +10,11 @@ export const Home = () => {
     const [doctors, setDoctors] = useState([]);
     const [deleteMessage, setDeleteMessage] = useState(null);
     const [displayConfirmationModal, setDisplayConfirmationModal] = useState(false);
-    const [showToast, setShowToast] = useState(false);
-    const [toastHeader, setToastHeader] = useState();
-    const [toastMsj, setToastMsj] = useState();
 
-    const submitDelete = (id) => {
-        console.log("confirmación delete");
-        setShowToast(true);
-        setToastHeader('Gestion de doctores');
-        setToastMsj('Se eliminó correctamente');
+    const submitDelete = async (id) => {
+        console.log("confirmación delete " + id);
+        const result = await DoctorService.delete(id);//axios.delete("http://localhost:3443/hospital/v1/api/doctor/" + id);
+        loadUsers();
         setDisplayConfirmationModal(false);
     };
     // Hide the modal
@@ -26,7 +22,9 @@ export const Home = () => {
         setDisplayConfirmationModal(false);
     };
 
-    const { id } = useParams()
+    //const { id } = useParams()
+    const [id, setId] = useState(null);
+
     useEffect(() => {
         loadUsers();
     }, []);
@@ -38,6 +36,7 @@ export const Home = () => {
 
     const deleteDoctor = async (id, index) => {
         setDeleteMessage('Would you like to remove ' + doctors[index].firstName + ' ' + doctors[index].lastName + ' info?');
+        setId(id);
         setDisplayConfirmationModal(true);
         //const result = await DoctorService.delete(id);//axios.delete("http://localhost:3443/hospital/v1/api/doctor/" + id);
         //loadUsers();
@@ -94,7 +93,7 @@ export const Home = () => {
                     ))}
                 </tbody>
             </Table>
-            <DeleteConfirmation showModal={displayConfirmationModal} confirmModal={submitDelete} hideModal={hideConfirmationModal} id={id} message={deleteMessage} setShowToast={setShowToast} />
+            <DeleteConfirmation showModal={displayConfirmationModal} hideModal={hideConfirmationModal} confirmModal={submitDelete} id={id} message={deleteMessage} />
         </Container>
     )
 }

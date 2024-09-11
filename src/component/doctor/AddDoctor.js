@@ -10,11 +10,11 @@ function AddDoctor() {
   let navigate = useNavigate();
 
   const schema = yup.object().shape({
-    firstName: yup.string().required(),
-    lastName: yup.string().required(),
-    salary: yup.string().required(),
-    location: yup.string().required(),
-    description: yup.string().required()
+    firstName: yup.string().trim().required("Firstname required"),
+    lastName: yup.string().trim().required("Lastname required"),
+    salary: yup.number().min(1.00, "Must be greater than 1.00").required("Salary required"),
+    location: yup.string().trim().required("Location required"),
+    description: yup.string().trim().min(10, "too short!").max(100, "too long!").required("Description required")
   });
 
   const onSubmit = async (values, actions) => {
@@ -31,19 +31,19 @@ function AddDoctor() {
           <h2>Add new Doctor</h2>
           <Formik
             validationSchema={schema}
+            validateOnChange={false}
+            validateOnBlur={false}
             onSubmit={onSubmit}
             initialValues={{
               firstName: '',
               lastName: '',
-              username: '',
-              city: '',
-              state: '',
-              zip: '',
-              terms: false,
+              location: '',
+              description: '',
+              salary: ''
             }}
           >
             {({ handleSubmit, handleChange, values, touched, errors }) => (
-              <Form onSubmit={handleSubmit}>
+              <Form onSubmit={handleSubmit} >
                 <Form.Group>
                   <Form.Label>
                     First name
@@ -117,6 +117,7 @@ function AddDoctor() {
                   </Form.Label>
                   <Form.Control
                     type='number'
+                    step='any'
                     placeholder='type your salary'
                     value={values.salary}
                     onChange={handleChange}
